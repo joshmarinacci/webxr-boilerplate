@@ -45,10 +45,10 @@ case simply delete the overlay.
 
 # Todos
 
-* *fixed* clicking does not work inside of VR
+* __fixed__ clicking does not work inside of VR
 * a way to customize the ray object easily
 * handle the nothing to load case
-* support touch events
+* __fixed__ support touch events
 * support gaze cursor for zero-button cases
 
 
