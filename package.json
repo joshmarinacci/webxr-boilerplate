@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/joshmarinacci/webxr-boilerplate#readme",
   "dependencies": {
-    "three": "^0.99.0"
+    "three": "^0.100.0"
   }
 }
