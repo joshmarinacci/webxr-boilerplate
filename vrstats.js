@@ -16,8 +16,8 @@ export default class VRStats extends THREE.Group {
             // new THREE.BoxGeometry(1,0.5,0.1),
             new THREE.MeshBasicMaterial({map:ctex})
         )
-        mesh.position.z = -3
-        mesh.position.y = 1.5
+        this.position.z = -3
+        this.position.y = 1.5
         this.add(mesh)
         this.cmesh = mesh
 
