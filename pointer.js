@@ -1,3 +1,5 @@
+import * as THREE from 'three'
+
 export const POINTER_ENTER = "enter"
 export const POINTER_EXIT = "exit"
 export const POINTER_CLICK = "click"

@@ -1,3 +1,4 @@
+import * as THREE from 'three'
 export default class VRStats extends THREE.Group {
     constructor(renderer) {
         super();
