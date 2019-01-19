@@ -27,6 +27,7 @@ export class Pointer {
         this.hoverTarget = null
 
         this.intersectionFilter = this.opts.intersectionFilter || ((o) => true)
+        this.multiTarget = this.opts.multiTarget || false
 
 
         // setup the mouse
@@ -136,7 +137,7 @@ export class Pointer {
         this.raycaster.setFromCamera(mouse, this.camera)
         const intersects = this.raycaster.intersectObjects(this.scene.children, true)
             .filter(it => this.intersectionFilter(it.object))
-        intersects.forEach((it) => {
+        intersects.forEach((it,i) => {
             this.fire(it.object, POINTER_PRESS, {type: POINTER_PRESS})
         })
     }
@@ -233,7 +234,9 @@ export class Pointer {
         this.raycaster.setFromCamera(mouse, this.camera)
         const intersects = this.raycaster.intersectObjects(this.scene.children, true)
             .filter(it => this.intersectionFilter(it.object))
-        intersects.forEach((it) => {
+
+        intersects.forEach((it,i) => {
+            if(!this.multiTarget && i > 0) return
             this.fire(it.object, POINTER_PRESS, {type: POINTER_PRESS, point: it.point, intersection:it})
         })
     }
@@ -245,7 +248,8 @@ export class Pointer {
         this.raycaster.setFromCamera(mouse, this.camera)
         const intersects = this.raycaster.intersectObjects(this.scene.children, true)
             .filter(it => this.intersectionFilter(it.object))
-        intersects.forEach((it) => {
+        intersects.forEach((it,i) => {
+            if(!this.multiTarget && i > 0) return
             this.fire(it.object, POINTER_RELEASE, {type: POINTER_RELEASE, point: it.point, intersection:it})
         })
     }
