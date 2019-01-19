@@ -214,9 +214,9 @@ export class Pointer {
         if(intersects.length > 0) {
             const it = intersects[0]
             this.fire(it.object, POINTER_CLICK, {type: POINTER_CLICK, point: it.point, intersection:it})
+        } else {
+            this.fireSelf(POINTER_CLICK, {type: POINTER_CLICK})
         }
-
-        this.fireSelf(POINTER_CLICK, {})
     }
     mouseClick(e) {
         const mouse = new THREE.Vector2()
@@ -249,7 +249,7 @@ export class Pointer {
         const intersects = this.raycaster.intersectObjects(this.scene.children, true)
             .filter(it => this.intersectionFilter(it.object))
         intersects.forEach((it,i) => {
-            if(!this.multiTarget && i > 0) return
+            if(!this.multiTarget && i > 0) return //skip all but the first
             this.fire(it.object, POINTER_RELEASE, {type: POINTER_RELEASE, point: it.point, intersection:it})
         })
     }
@@ -258,7 +258,8 @@ export class Pointer {
         e.target.userData.isSelecting = true;
         const intersects = this.raycaster.intersectObjects(this.scene.children, true)
             .filter(it => this.intersectionFilter(it.object))
-        intersects.forEach((it) => {
+        intersects.forEach((it,i) => {
+            if(!this.multiTarget && i > 0) return //skip all but the first
             this.fire(it.object, POINTER_PRESS, {type: POINTER_PRESS, point: it.point, intersection:it})
         })
     }
@@ -271,7 +272,8 @@ export class Pointer {
         this.raycaster.set(c.position, dir)
         const intersects = this.raycaster.intersectObjects(this.scene.children, true)
             .filter(it => this.intersectionFilter(it.object))
-        intersects.forEach((it) => {
+        intersects.forEach((it,i) => {
+            if(!this.multiTarget && i > 0) return //skip all but the first
             this.fire(it.object, POINTER_RELEASE, {type: POINTER_RELEASE, point: it.point})
         })
         this._processClick()
@@ -282,6 +284,9 @@ export class Pointer {
     }
 
 
+    addEventListener(type,cb) {
+        this.on(type,cb)
+    }
     on(type,cb) {
         if(!this.listeners[type]) this.listeners[type] = []
         this.listeners[type].push(cb)
