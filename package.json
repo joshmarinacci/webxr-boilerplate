@@ -1,6 +1,6 @@
 {
   "name": "webxr-boilerplate",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Boilerplate for using WebVR/XR with ThreeJS",
   "main": "index.js",
   "scripts": {
