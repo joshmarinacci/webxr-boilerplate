@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+import * as THREE from '../three/build/three.module'
 
 export const POINTER_ENTER = "enter"
 export const POINTER_EXIT = "exit"
@@ -7,7 +7,6 @@ export const POINTER_MOVE = "move"
 export const POINTER_PRESS = "press"
 export const POINTER_RELEASE = "release"
 
-// import * as THREE from "./node_modules/three/build/three.module.js"
 
 const toRad = (degrees) => degrees*Math.PI/180
 

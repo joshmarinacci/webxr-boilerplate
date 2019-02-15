@@ -5,11 +5,6 @@
     <title>WebVR + ThreeJS Application</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-    <!-- required for everything -->
-    <script src="./node_modules/three/build/three.min.js"></script>
-    <!-- needed for loading GLTF files -->
-    <script src="./node_modules/three/examples/js/loaders/GLTFLoader.js"></script>
-
     <style type="text/css">
         html, body {
             margin:0;
@@ -75,12 +70,13 @@
 
 
 <script type="module">
+    import * as THREE from "./node_modules/three/build/three.module";
     // for pointer (mouse, controller, touch) support
-    import {POINTER_CLICK, POINTER_ENTER, POINTER_EXIT, Pointer} from './pointer.js'
+    import {POINTER_CLICK, POINTER_ENTER, POINTER_EXIT, Pointer} from "./node_modules/webxr-boilerplate/pointer.js";
     // calculate FPS and other stats
-    import VRStats from "./vrstats.js"
+    import VRStats from "./node_modules/webxr-boilerplate/vrstats.js";
     // enter and exit VR
-    import VRManager, {VR_DETECTED} from "./vrmanager.js"
+    import VRManager, {VR_DETECTED} from "./node_modules/webxr-boilerplate/vrmanager.js";
 
     //JQuery-like selector
     const $ = (sel) => document.querySelector(sel)
@@ -100,7 +96,7 @@
         //load a cat texture
         const texture_loader = new THREE.TextureLoader()
         //cat from http://creative-commons-cats.tumblr.com/page/3
-        const texture = texture_loader.load('./cat.jpg')
+        const texture = texture_loader.load('./node_modules/webxr-boilerplate/cat.jpg')
 
         //create a cube
         cube = new THREE.Mesh(

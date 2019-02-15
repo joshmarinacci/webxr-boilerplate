@@ -3,9 +3,10 @@
 
 ## How to use this boilerplate
 
-* Copy or fork this repo
-* install threejs using `npm install`
-* customize `initContent()` with whatever you want
+* in your new project install the boilerplate with `npm install --save webxr-boilerplate`
+* this will automatically install ThreeJS as well
+* copy `node_modules/webxr-boilerplate/v2.html` to `./index.html`
+* customize `initContent()` in `index.html` with whatever you want.
 
 
 
