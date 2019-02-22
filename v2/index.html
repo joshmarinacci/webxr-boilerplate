@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebXR + ThreeJS Application</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <style type="text/css">
+        #container {
+            border: 3px solid red;
+            width: 500px;
+            height: 300px;
+        }
+        #fullscreen, #entervr {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>my cool VR app</h1>
+<div id="container"></div>
+<div>
+    <div id="progress">>
+        <label>loading</label>
+        <progress id="progress-bar" value="0.5"></progress>
+    </div>
+    <button id="fullscreen">play full screen</button>
+    <button id="entervr">enter vr</button>
+</div>
+
+
+
+<script type="module">
+    import WebXRBoilerPlate from "./WebXRBoilerPlate"
+    import {Mesh, BoxBufferGeometry, MeshLambertMaterial,
+        Color, DirectionalLight, AmbientLight,
+        TextureLoader
+    } from "../node_modules/three/build/three.module"
+    import VRStats from "./vrstats";
+
+    //JQuery-like selector
+    const $ = (sel) => document.querySelector(sel)
+    const on = (elem, type, cb) => elem.addEventListener(type,cb)
+
+    const app = new WebXRBoilerPlate({
+        container: $("#container")
+    })
+    app.init().then((app) => {
+        app.scene.background = new Color( 0xcccccc );
+        const stats = new VRStats()
+        app.camera.add(stats)
+
+        // app.pointer = new Pointer({
+        //     intersectionFilter: ((o) => o.userData.clickable),
+        //     enableLaser:true,
+        // })
+
+
+        //load a cat texture
+        const texture_loader = new TextureLoader()
+        //cat from http://creative-commons-cats.tumblr.com/page/3
+        const texture = texture_loader.load('./cat.jpg')
+
+        const cube = new Mesh(new BoxBufferGeometry(1,1,1),new MeshLambertMaterial({color:'#ffffff', map:texture}))
+        // move cube back 5 meters so we can see it
+        cube.position.z = -5
+        //move cube up to camera height (~1.5m)
+        cube.position.y = 1.5
+        app.scene.add(cube)
+
+
+        //a standard directional light from above
+        const light = new DirectionalLight( 0xffffff, 1.0 );
+        light.position.set( 0, 10, 5 ).normalize();
+        app.scene.add( light );
+
+        //a standard ambient light
+        app.scene.add(new AmbientLight(0xffffff,0.3))
+
+        app.onRender(()=> cube.rotation.y += 0.01)
+        // on(cube,POINTER_PRESS,()=> cube.material.color.set(0xff0000)
+        // on(cube,POINTER_RELEASE,()=> cube.material.color.set(0xffffff)
+
+        /*
+        const audioListener = new THREE.AudioListener()
+        app.camera.add(audioListener)
+        effects = new THREE.Audio(audioListener)
+        const audioLoader = new THREE.AudioLoader()
+        audioLoader.load('./effects.mp3',(buffer) => {
+            effects.setBuffer(buffer)
+            effects.setVolume(0.75)
+        })
+        const bgAudioLoader = new BackgroundAudioLoader()
+        const music = new BackgroundAudio(bgAudioLoader)
+        */
+
+        //update progress indicator
+        on(app,'progress',(prog)=> $("#progress").setAttribute('value',100*prog))
+
+        //when all assets are loaded
+        on(app,'loaded',()=>{
+            // hide the loading progress bar
+            $("#progress").style.display = 'none'
+            //show the fullscreen button
+            $("#fullscreen").style.display = 'block'
+            on($("#fullscreen"),'click',()=> app.playFullscreen())
+        })
+        //when VR support is detected
+        on(app,'detected',()=>{
+            // show the enter VR button
+            $("#entervr").style.display = 'block'
+            on($("#enter-button"),'click',()=> {
+                app.enterVR()
+                // music.play()
+            })
+        })
+    })
+
+    /*
+    function render(time) {
+        //update the pointer and stats, if configured
+        if(pointer) pointer.tick(time)
+        if(stats) stats.update(time)
+        //rotate the cube on every tick
+        if(cube) cube.rotation.y += 0.002
+        renderer.render( scene, camera );
+    }
+    */
+
+</script>
+</body>
+</html>

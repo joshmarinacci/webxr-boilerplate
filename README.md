@@ -53,3 +53,89 @@ case simply delete the overlay.
 * support gaze cursor for zero-button cases
 
 
+
+
+===========
+
+# Notes for v2
+
+* It shouldn't take over the screen until you enter VR. It should be possible to have a regular page with a threejs 
+rectangle in it that you can put content around, scroll, etc. And it should have a way to put a button on top or next
+to it to enter vr. this part should be fully controllable by the page. probably provide a container to the boilerplate.
+* Use only ES6 modules. Makes life far easier.
+* no globals. scene, camera, renderer, etc. should be passed to the callback or be available on the boilerplate object.
+* most code should be in a separate file, not in the html file. so it's easy to ignore.
+* redesign the way events work to let you customize what areas need to be scanned
+
+## bonus
+
+* should optionally have a way to suck an existing canvas into a WebVR scene. Then just worry about input and background.
+* a way to load background audio that doesn't trigger decoder issues. perhaps a new loader impl that delegates to audio element.
+* hooks for when we add post processing
+
+## new input design
+
+Right now the input can be slow because we scan the whole screen on every frame, or at least every time the input
+device changes. Ex: the Jingle Smash game is slow when you point down because it scans the whole scene looking for something
+with userinput:true, and the ground doesn't receive input. Thus it scans the entire scene.
+
+### ideas
+ 
+* provide a list of objects to recursively scan.  *downside* the objects may change throughout the lifetime of the application. You'd end up providing group objects that these things will live in, instead.
+* set a boolean on objects which contain input enabled objects. only those will be scanned
+* set a boolean on objects to skip scanning. these will never be scanned.
+* indicate if you really need move events (ex: hover effects), otherwise just get clicked / down / up events.
+* set a scan root. a special case of one of the above?
+ 
+
+## example code
+
+``` javascript
+import WebXRBoilerplate, Three, GLTFLoader, etc.
+const app = new WebXRBoilerPlate({
+    container: $("#myapp")
+})
+app.init().then((app) => {
+    
+    const stats = new VRStats()
+    app.camera.add(stats) 
+    
+    app.pointer = new Pointer({
+        intersectionFilter: ((o) => o.userData.clickable),
+        enableLaser:true,
+    })
+    
+
+    const cube = new Mesh(new BoxGeometry(),new Material())
+    app.scene.add(cube)
+    
+    app.onRender(()=> cube.rotation.y += 0.1)
+    on(cube,POINTER_PRESS,()=> cube.material.color.set(0xff0000)
+    on(cube,POINTER_RELEASE,()=> cube.material.color.set(0xffffff)
+    
+    const audioListener = new THREE.AudioListener()
+    app.camera.add(audioListener)
+    effects = new THREE.Audio(audioListener)
+    const audioLoader = new THREE.AudioLoader()
+    audioLoader.load('./effects.mp3',(buffer) => {
+        effects.setBuffer(buffer)
+        effects.setVolume(0.75)
+    })
+    
+
+    const bgAudioLoader = new BackgroundAudioLoader()
+    const music = new BackgroundAudio(bgAudioLoader)
+
+    on(app,LOADED,()=>{
+        hide the loading progress bar
+        $("#loading-progress").style.display = 'none'
+    })
+    on(app,VR_DETECTED,()=>{
+        show the enter VR button
+        on($("#enter-button"),'click',()=> {
+            app.enterVR())
+            music.play()
+        })
+    });
+})
+```
