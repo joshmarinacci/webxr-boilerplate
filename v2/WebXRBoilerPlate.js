@@ -1,6 +1,6 @@
 import {DefaultLoadingManager, PerspectiveCamera, Scene, WebGLRenderer,} from "./node_modules/three/build/three.module.js"
 
-import VRManager from "./vrmanager.js";
+import VRManager, {VR_DETECTED} from "./vrmanager.js";
 
 export default class WebXRBoilerPlate {
     constructor(options) {
@@ -23,6 +23,9 @@ export default class WebXRBoilerPlate {
         this.renderer.vr.enabled = true;
         this.container.appendChild(this.renderer.domElement);
         this.vrmanager = new VRManager(this.renderer)
+        this.vrmanager.addEventListener(VR_DETECTED, ()=>{
+            if(this.listeners[VR_DETECTED]) this.listeners[VR_DETECTED].forEach(cb => cb(this))
+        })
 
         this.loadingManager = DefaultLoadingManager
 
