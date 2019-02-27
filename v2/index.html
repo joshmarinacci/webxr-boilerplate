@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <style type="text/css">
         body {
-            margin: 0 30em;
+            max-width: 40em;
+            margin: auto;
         }
         #container {
             border: 3px solid red;
@@ -183,7 +184,7 @@
         on(app,'detected',()=>{
             // show the enter VR button
             $("#entervr").style.display = 'block'
-            on($("#enter-button"),'click',()=> {
+            on($("#entervr"),'click',()=> {
                 music.play()
                 app.enterVR()
             })
