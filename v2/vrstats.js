@@ -1,4 +1,4 @@
-import { Group, CanvasTexture, Mesh, PlaneBufferGeometry, MeshBasicMaterial, } from './node_modules/three/build/three.module.js'
+import { Group, CanvasTexture, Mesh, PlaneBufferGeometry, PlaneGeometry, MeshBasicMaterial, } from './node_modules/three/build/three.module.js'
 export default class VRStats extends Group {
     constructor(app) {
         super();
@@ -12,7 +12,7 @@ export default class VRStats extends Group {
         c.fillRect(0,0,can.width,can.height)
         const ctex = new CanvasTexture(can)
         const mesh = new Mesh(
-            new PlaneBufferGeometry(1,0.5),
+            new PlaneGeometry(1,0.5),
             new MeshBasicMaterial({map:ctex})
         )
         this.position.z = -3
