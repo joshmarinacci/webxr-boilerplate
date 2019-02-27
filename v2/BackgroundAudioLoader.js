@@ -1,6 +1,6 @@
 import {
     DefaultLoadingManager,
-} from "../node_modules/three/build/three.module.js"
+} from "./node_modules/three/build/three.module.js"
 
 export default class BackgroundAudioLoader {
     constructor(manager) {
