@@ -1,4 +1,4 @@
-import {DefaultLoadingManager, PerspectiveCamera, Scene, WebGLRenderer,} from "../node_modules/three/build/three.module"
+import {DefaultLoadingManager, PerspectiveCamera, Scene, WebGLRenderer,} from "./node_modules/three/build/three.module.js"
 
 import VRManager from "./vrmanager.js";
 
