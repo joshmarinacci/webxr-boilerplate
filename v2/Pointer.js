@@ -29,15 +29,15 @@ export const POINTER_RELEASE = "release"
 const toRad = (degrees) => degrees*Math.PI/180
 
 export class Pointer {
-    constructor(scene, renderer, camera, opts) {
+    constructor(app, opts) {
+        this.scene = app.scene
+        this.renderer = app.renderer
+        this.camera = app.camera
         this.listeners = {}
         this.opts = opts || {}
         this.opts.enableLaser = (this.opts.enableLaser !== undefined) ? this.opts.enableLaser : true
         this.opts.laserLength = (this.opts.laserLength !== undefined) ? this.opts.laserLength : 3
-        this.scene = scene
-        this.renderer = renderer
-        this.canvas = renderer.domElement
-        this.camera = camera
+        this.canvas = this.renderer.domElement
 
         this.raycaster = new Raycaster()
         this.waitcb = null

@@ -1,12 +1,6 @@
-import {Mesh, BoxBufferGeometry,
-    MeshLambertMaterial, Color, DirectionalLight,
-    Scene,
-    PerspectiveCamera,
-    WebGLRenderer,
-    DefaultLoadingManager,
-} from "../node_modules/three/build/three.module"
+import {DefaultLoadingManager, PerspectiveCamera, Scene, WebGLRenderer,} from "../node_modules/three/build/three.module"
 
-import VRManager, {VR_DETECTED} from "../vrmanager";
+import VRManager from "../vrmanager";
 
 export default class WebXRBoilerPlate {
     constructor(options) {
@@ -20,11 +14,7 @@ export default class WebXRBoilerPlate {
     }
 
     init() {
-        //create DIV for the canvas
-        // const container = document.createElement( 'div' );
-        // document.body.appendChild( container );
         this.scene = new Scene();
-        console.log('container size', this.container.clientWidth)
         this.camera = new PerspectiveCamera(70, this.container.clientWidth / this.container.clientHeight, 0.1, 50);
         this.renderer = new WebGLRenderer({antialias: true});
         this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -33,32 +23,28 @@ export default class WebXRBoilerPlate {
         this.renderer.vr.enabled = true;
         this.container.appendChild(this.renderer.domElement);
         this.vrmanager = new VRManager(this.renderer)
-        // document.body.appendChild( WEBVR.createButton( renderer ) );
 
-        // initContent(scene,camera,renderer)
+        this.loadingManager = DefaultLoadingManager
 
+        DefaultLoadingManager.joshtest = true
         DefaultLoadingManager.onStart = (url, loaded, total) => {
-            console.log(`loading ${url}.  loaded ${loaded} of ${total}`)
+            console.log(`XR: loading ${url}.  loaded ${loaded} of ${total}`)
         }
         DefaultLoadingManager.onLoad = () => {
-            console.log(`loading complete`)
-            // $("#loading-indicator").style.display = 'none'
-            // $("#enter-button").style.display = 'block'
-            // $("#enter-button").removeAttribute('disabled')
+            console.log(`XR: loading complete`)
             if (this.listeners.loaded) this.listeners.loaded.forEach(cb => cb(this))
         }
         DefaultLoadingManager.onProgress = (url, loaded, total) => {
-            console.log(`prog ${url}.  loaded ${loaded} of ${total}`)
+            console.log(`XR: prog ${url}.  loaded ${loaded} of ${total}`)
             if(this.listeners.progress) this.listeners.progress.forEach(cb => cb(loaded/total))
-            // $("#progress").setAttribute('value',100*(loaded/total))
         }
         DefaultLoadingManager.onError = (url) => {
-            console.log(`error loading ${url}`)
+            console.log(`XR: error loading ${url}`)
         }
 
         this.lastSize = { width: 0, height: 0}
-        this.render = () => {
-            if (this.onRenderCb) this.onRenderCb(this)
+        this.render = (time) => {
+            if (this.onRenderCb) this.onRenderCb(time,this)
             this.checkContainerSize()
             this.renderer.render(this.scene, this.camera);
         }
@@ -80,7 +66,6 @@ export default class WebXRBoilerPlate {
     }
 
     playFullscreen() {
-        console.log("entering full screen")
         this.resizeOnNextRepaint = true
         this.container.requestFullscreen()
     }

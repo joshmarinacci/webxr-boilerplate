@@ -1,8 +1,8 @@
-import { Group, CanvasTexture, Mesh, PlaneBufferGeometry, MeshBasicMaterial, } from '../node_modules/three/build/three.module'
+import { Group, CanvasTexture, Mesh, PlaneBufferGeometry, MeshBasicMaterial, } from '../node_modules/three/build/three.module.js'
 export default class VRStats extends Group {
-    constructor(renderer) {
+    constructor(app) {
         super();
-        this.renderer = renderer
+        this.renderer = app.renderer
         const can = document.createElement('canvas')
         can.width = 256
         can.height = 128
@@ -27,7 +27,7 @@ export default class VRStats extends Group {
 
     update(time) {
         if(time - this.last > 300) {
-            // console.log("updating",this.rendereer.info)
+            // console.log("updating",this.renderer.info)
             // console.log(`stats calls:`,this.renderer.info)
 
             const fps = ((this.renderer.info.render.frame - this.lastFrame)*1000)/(time-this.last)

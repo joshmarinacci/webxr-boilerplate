@@ -18,6 +18,23 @@
 <body>
 
 <h1>my cool VR app</h1>
+<p>
+    This WebXR boilerplate is easy to use. Just view the source or get
+    your own copy at <a href="https://github.com/joshmarinacci/webxr-boilerplate/">github</a>
+    It creates a simple ThreeJS scene with a stats viewer, a pointer abstraction, and hooks to detect VR support.
+    Best of all it uses only ES6 Modules.
+</p>
+
+<p>
+    You can click on the cube to change its color and play a sound effect.
+    When you enter VR or full screen the background music will play.
+</p>
+
+<ul>
+    <li>Example music from <a href="http://freemusicarchive.org/music/BoxCat_Games/Nameless_the_Hackers_RPG_Soundtrack/BoxCat_Games_-_Nameless-_the_Hackers_RPG_Soundtrack_-_10_Epic_Song">BoxCat Games</a></li>
+    <li>Example sound effects from <a href="">??</a></li>
+    <li>Cat image from <a href="http://creative-commons-cats.tumblr.com/page/3">Creative Commons Cats</a></li>
+</ul>
 <div id="container"></div>
 <div>
     <div id="progress">>
@@ -31,12 +48,14 @@
 
 
 <script type="module">
-    import WebXRBoilerPlate from "./WebXRBoilerPlate"
+    import WebXRBoilerPlate from "./WebXRBoilerPlate.js"
     import {Mesh, BoxBufferGeometry, MeshLambertMaterial,
         Color, DirectionalLight, AmbientLight,
-        TextureLoader
-    } from "../node_modules/three/build/three.module"
-    import VRStats from "./vrstats";
+        TextureLoader, AudioListener, Audio, AudioLoader
+    } from "../node_modules/three/build/three.module.js"
+    import VRStats from "./vrstats.js";
+    import BackgroundAudioLoader from './BackgroundAudioLoader.js'
+    import {Pointer, POINTER_PRESS, POINTER_RELEASE} from "./Pointer.js"
 
     //JQuery-like selector
     const $ = (sel) => document.querySelector(sel)
@@ -47,13 +66,30 @@
     })
     app.init().then((app) => {
         app.scene.background = new Color( 0xcccccc );
-        const stats = new VRStats()
-        app.camera.add(stats)
 
-        // app.pointer = new Pointer({
-        //     intersectionFilter: ((o) => o.userData.clickable),
-        //     enableLaser:true,
-        // })
+        //create stats viewer
+        const stats = new VRStats(app)
+        // place stats inside camera so it's fixed position
+        app.camera.add(stats)
+        // add camera to scene so we can see it
+        app.scene.add(app.camera)
+
+
+        const pointer = new Pointer(app,{
+            //Pointer searches everything in the scene by default
+            //override this to match just certain things
+            intersectionFilter: ((o) => o.userData.clickable),
+
+            //make the camera pan when moving the mouse. good for simulating head turning on desktop
+            cameraFollowMouse:false,
+
+            // set to true to move the controller node forward and tilt with the mouse.
+            // good for testing VR controls on desktop
+            mouseSimulatesController:false,
+
+            //turn this off if you provide your own pointer model
+            enableLaser: true,
+        })
 
 
         //load a cat texture
@@ -61,12 +97,21 @@
         //cat from http://creative-commons-cats.tumblr.com/page/3
         const texture = texture_loader.load('./cat.jpg')
 
-        const cube = new Mesh(new BoxBufferGeometry(1,1,1),new MeshLambertMaterial({color:'#ffffff', map:texture}))
+        // make a cube w/ the cat texture
+        const cube = new Mesh(
+            new BoxBufferGeometry(1,1,1),
+            new MeshLambertMaterial({color:'#ffffff', map:texture})
+        )
+        //make it receive input events
+        cube.userData.clickable = true
         // move cube back 5 meters so we can see it
         cube.position.z = -5
         //move cube up to camera height (~1.5m)
         cube.position.y = 1.5
+        //add to the scene
         app.scene.add(cube)
+
+
 
 
         //a standard directional light from above
@@ -77,24 +122,46 @@
         //a standard ambient light
         app.scene.add(new AmbientLight(0xffffff,0.3))
 
-        app.onRender(()=> cube.rotation.y += 0.01)
-        // on(cube,POINTER_PRESS,()=> cube.material.color.set(0xff0000)
-        // on(cube,POINTER_RELEASE,()=> cube.material.color.set(0xffffff)
 
-        /*
-        const audioListener = new THREE.AudioListener()
+
+        // Load positional audio, like sound effects. Entire buffer
+        // will be loaded before complete
+        const audioListener = new AudioListener()
         app.camera.add(audioListener)
-        effects = new THREE.Audio(audioListener)
-        const audioLoader = new THREE.AudioLoader()
-        audioLoader.load('./effects.mp3',(buffer) => {
-            effects.setBuffer(buffer)
-            effects.setVolume(0.75)
+        const effect = new Audio(audioListener)
+        const audioLoader = new AudioLoader()
+        audioLoader.load('./raygun.mp3',(buffer) => {
+            effect.setBuffer(buffer)
+            effect.setVolume(0.75)
         })
-        const bgAudioLoader = new BackgroundAudioLoader()
-        const music = new BackgroundAudio(bgAudioLoader)
-        */
 
-        //update progress indicator
+
+        //load background audio (non-positional), like music.
+        // this is important for large MP3s that could block the app from loading
+        //BackgroundAudioLoader will use <audio> elements and can play before
+        //the entire audio is loaded
+
+        // example music is from
+        // http://freemusicarchive.org/music/BoxCat_Games/Nameless_the_Hackers_RPG_Soundtrack/BoxCat_Games_-_Nameless-_the_Hackers_RPG_Soundtrack_-_10_Epic_Song
+        let music
+        const musicLoader = new BackgroundAudioLoader(app.loadingManager)
+        musicLoader.load("./music.mp3",(audio)=> music = audio)
+
+
+
+
+
+        // things to do on every render tick
+        // this is the render loop
+        app.onRender((time, app)=> {
+            pointer.tick(time)
+            stats.update(time)
+            cube.rotation.y += 0.01
+        })
+
+
+
+        //update progress indicator while loading
         on(app,'progress',(prog)=> $("#progress").setAttribute('value',100*prog))
 
         //when all assets are loaded
@@ -103,28 +170,34 @@
             $("#progress").style.display = 'none'
             //show the fullscreen button
             $("#fullscreen").style.display = 'block'
-            on($("#fullscreen"),'click',()=> app.playFullscreen())
+            on($("#fullscreen"),'click',()=> {
+                music.play()
+                app.playFullscreen()
+            })
         })
         //when VR support is detected
         on(app,'detected',()=>{
             // show the enter VR button
             $("#entervr").style.display = 'block'
             on($("#enter-button"),'click',()=> {
+                music.play()
                 app.enterVR()
             })
         })
+
+
+
+        //UI event handlers
+        on(cube,POINTER_PRESS,()=> {
+            cube.material.color.set(0xff0000)
+            effect.play()
+        })
+        on(cube,POINTER_RELEASE,()=> {
+            cube.material.color.set(0xffffff)
+        })
+
     })
 
-    /*
-    function render(time) {
-        //update the pointer and stats, if configured
-        if(pointer) pointer.tick(time)
-        if(stats) stats.update(time)
-        //rotate the cube on every tick
-        if(cube) cube.rotation.y += 0.002
-        renderer.render( scene, camera );
-    }
-    */
 
 </script>
 </body>
