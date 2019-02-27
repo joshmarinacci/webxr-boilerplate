@@ -1,6 +1,6 @@
 import {DefaultLoadingManager, PerspectiveCamera, Scene, WebGLRenderer,} from "../node_modules/three/build/three.module"
 
-import VRManager from "../vrmanager";
+import VRManager from "./vrmanager.js";
 
 export default class WebXRBoilerPlate {
     constructor(options) {
