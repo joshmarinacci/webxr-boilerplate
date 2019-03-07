@@ -12,10 +12,6 @@ import {
     Line,
     Mesh,
     MeshLambertMaterial,
-    Scene,
-    PerspectiveCamera,
-    WebGLRenderer,
-    DefaultLoadingManager,
 } from "./node_modules/three/build/three.module.js"
 
 export const POINTER_ENTER = "enter"
