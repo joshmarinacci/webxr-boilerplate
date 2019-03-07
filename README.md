@@ -17,11 +17,7 @@ Use v2 if you are creating a new project.
 * copy `node_modules/webxr-boilerplate/v2/index.html` to `./index.html`
 * customize `initContent()` in `index.html` with whatever you want.
 * customize the `app.init().then()` promise in `index.html` with whatever you want.
-
-
 * check out the [examples](./examples/) too.
-
-
 
 
 # Notes
@@ -93,13 +89,60 @@ pointer.controller1.orientation
 pointer.controller1.add(wandgltf.scene)
 ```
 
+# VR Stats
+
+The `VRStats` class gives you stats *within* VR. 
+
+```javascript
+//create stats viewer
+const stats = new VRStats(app)
+// place stats inside camera so it's fixed position
+app.camera.add(stats)
+// add camera to scene so we can see it
+app.scene.add(app.camera)
+```
 
 
-The `VRStats` class gives you stats *within* VR.  To remove it just don't initialize it.
+# Progress Bar
 
-The progress bar is tied to the default loader. If you aren't loading anything, meaning no textures or 
+The progress bar is tied to the ThreeJS `DEFAULT_LOADER_MANAGER`. If you aren't loading anything, meaning no textures or 
 fonts or sounds, then the progress events will never fire and it will never dismiss the overlay. In this 
-case simply delete the overlay. 
+case simply delete the overlay. Since you don't really need it.
+
+
+# Background Audio
+
+For spatialized audio clips that are short, like sound effects, you should use the standard ThreeJS Audio class.
+For longer audio clips that are not spatialized, like background music, it is more efficient to use an HTML `<audio>`
+element instead.  The `BackgroundAudioLoader` does this. It will get the app up and running faster by streaming
+the audio file instead of downloading and decompressing the entire thing before starting the app.
+
+
+```javascript
+// Load positional audio, like sound effects. Entire buffer
+// will be loaded before complete
+const audioListener = new AudioListener()
+app.camera.add(audioListener)
+const effect = new Audio(audioListener)
+const audioLoader = new AudioLoader()
+audioLoader.load('./raygun.mp3',(buffer) => {
+    effect.setBuffer(buffer)
+    effect.setVolume(0.75)
+})
+
+
+//load background audio (non-positional), like music.
+// this is important for large MP3s that could block the app from loading
+//BackgroundAudioLoader will use <audio> elements and can play before
+//the entire audio is loaded
+
+// example music is from
+// http://freemusicarchive.org/music/BoxCat_Games/Nameless_the_Hackers_RPG_Soundtrack/BoxCat_Games_-_Nameless-_the_Hackers_RPG_Soundtrack_-_10_Epic_Song
+let music
+const musicLoader = new BackgroundAudioLoader(app.loadingManager)
+musicLoader.load("./music.mp3",(audio)=> music = audio)
+```
+
 
 
 # Todos
