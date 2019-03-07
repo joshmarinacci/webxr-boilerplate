@@ -102,6 +102,30 @@ app.camera.add(stats)
 app.scene.add(app.camera)
 ```
 
+# Raycasting
+
+The `Pointer` uses a copy of the standard ThreeJS Raycaster class which has been modified to support filtering.
+
+By default the Pointer will let you click on anything in the scene. To mark only certain objects as clickable set
+the `intersectionFilter` option.
+
+By default the Pointer will scan through the *entire scene*. To prune branches of the scene graph set the `recurseFilter`
+option.
+
+```javascript
+new Pointer(app, {
+    
+    //Pointer searches everything in the scene by default
+    //override this to match just certain things
+    intersectionFilter: ((o) => o.userData.clickable),
+    
+    //eliminate from raycasting recursion to make it faster
+    recurseFilter: (o) => {
+        if(o.userData && o.userData.skipRaycast === true) return false
+        return true
+    }
+})
+```
 
 # Progress Bar
 

@@ -1,10 +1,10 @@
+import {Raycaster} from "./Raycaster.js"
 import {
     Object3D,
     Vector2,
     Vector3,
     Quaternion,
     BufferGeometry,
-    Raycaster,
     Float32BufferAttribute,
     LineBasicMaterial,
     NormalBlending,
@@ -44,6 +44,7 @@ export class Pointer {
         this.hoverTarget = null
 
         this.intersectionFilter = this.opts.intersectionFilter || ((o) => true)
+        this.raycaster.recurseFilter = this.opts.recurseFilter || (()=> true)
         this.multiTarget = this.opts.multiTarget || false
 
 
