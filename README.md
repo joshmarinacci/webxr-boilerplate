@@ -1,12 +1,26 @@
 # ThreeJS + WebVR Boilerplate
 
 
+This is a boilerplate to get your WebXR/VR project up and running quickly. It uses only ES6 modules, no globals, and
+the only dependency is a recent ThreeJS.
+
+## Important note
+
+Use v1 if you are following the instructions from the VR video series
+
+Use v2 if you are creating a new project.
+
 ## How to use this boilerplate
 
 * in your new project install the boilerplate with `npm install --save webxr-boilerplate`
 * this will automatically install ThreeJS as well
-* copy `node_modules/webxr-boilerplate/v2.html` to `./index.html`
+* copy `node_modules/webxr-boilerplate/v2/index.html` to `./index.html`
 * customize `initContent()` in `index.html` with whatever you want.
+* customize the `app.init().then()` promise in `index.html` with whatever you want.
+
+
+* check out the [examples](./examples/) too.
+
 
 
 
@@ -46,32 +60,11 @@ case simply delete the overlay.
 
 # Todos
 
-* __fixed__ clicking does not work inside of VR
 * a way to customize the ray object easily
 * handle the nothing to load case
-* __fixed__ support touch events
 * support gaze cursor for zero-button cases
 
 
-
-
-===========
-
-# Notes for v2
-
-* It shouldn't take over the screen until you enter VR. It should be possible to have a regular page with a threejs 
-rectangle in it that you can put content around, scroll, etc. And it should have a way to put a button on top or next
-to it to enter vr. this part should be fully controllable by the page. probably provide a container to the boilerplate.
-* Use only ES6 modules. Makes life far easier.
-* no globals. scene, camera, renderer, etc. should be passed to the callback or be available on the boilerplate object.
-* most code should be in a separate file, not in the html file. so it's easy to ignore.
-* redesign the way events work to let you customize what areas need to be scanned
-
-## bonus
-
-* should optionally have a way to suck an existing canvas into a WebVR scene. Then just worry about input and background.
-* a way to load background audio that doesn't trigger decoder issues. perhaps a new loader impl that delegates to audio element.
-* hooks for when we add post processing
 
 ## new input design
 
