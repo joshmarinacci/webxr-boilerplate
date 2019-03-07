@@ -40,7 +40,7 @@ enters an object in the scene.
 
 To listen for clicking on a cube do:
 
-```
+```javascript
 cube.addEventListener(POINTER_CLICK, (e)=>{
     console.log("clicked on cube at ", e.point)
 })
@@ -50,6 +50,50 @@ Note that all of these events fire *on an object* that intersects the ray from t
 the pointer itself.  This means you will not receive events if the scene is empty. To get events as the user moves
 the pointer around, regardless of what the pointer is pointing at, create an invisible sphere around the user/camera and listen for 
 events on that.
+
+
+## examples
+
+### click on a cube
+
+```javascript
+cube.addEventListener(POINTER_CLICK, (e) => {
+    console.log("clicked on the cube at", e.point
+}) 
+```
+
+### find out *where* on a plane the pointer is pointing in UV space
+
+```javascript
+plane.addEventListener(POINTER_MOVE, (e) => {
+    console.log("location is ", e.intersection.uv)
+})
+```
+
+### disable pointer while playing a game but show during a dialog
+
+```javascript
+if(dialog.visible) {
+    pointer.enable()
+} else {
+    pointer.disable()
+}
+```
+
+## get the position and orientation of the controller
+
+```javascript
+pointer.controller1.position
+pointer.controller1.orientation
+```
+
+## attach a wand GLTF to the controller
+
+```javascript
+pointer.controller1.add(wandgltf.scene)
+```
+
+
 
 The `VRStats` class gives you stats *within* VR.  To remove it just don't initialize it.
 
@@ -83,7 +127,7 @@ with userinput:true, and the ground doesn't receive input. Thus it scans the ent
 
 ## example code
 
-``` javascript
+```javascript
 import WebXRBoilerplate, Three, GLTFLoader, etc.
 const app = new WebXRBoilerPlate({
     container: $("#myapp")
