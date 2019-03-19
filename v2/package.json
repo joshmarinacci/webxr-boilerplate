@@ -1,6 +1,6 @@
 {
-  "name": "v2",
-  "version": "1.0.0",
+  "name": "webxr-boilerplate",
+  "version": "0.2.1b",
   "description": "",
   "main": "BackgroundAudioLoader.js",
   "scripts": {

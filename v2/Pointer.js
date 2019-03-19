@@ -16,7 +16,7 @@ import {
     PerspectiveCamera,
     WebGLRenderer,
     DefaultLoadingManager,
-} from "./node_modules/three/build/three.module.js"
+} from "../three/build/three.module.js"
 
 export const POINTER_ENTER = "enter"
 export const POINTER_EXIT = "exit"

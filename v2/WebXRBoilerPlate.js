@@ -1,4 +1,4 @@
-import {DefaultLoadingManager, PerspectiveCamera, Scene, WebGLRenderer,} from "./node_modules/three/build/three.module.js"
+import {DefaultLoadingManager, PerspectiveCamera, Scene, WebGLRenderer,} from "../three/build/three.module.js"
 
 import VRManager, {VR_DETECTED} from "./vrmanager.js";
 
@@ -6,6 +6,7 @@ export default class WebXRBoilerPlate {
     constructor(options) {
         this.listeners = {}
         this.container = options.container
+        this.options = options
         this.resizeOnNextRepaint = false
     }
     addEventListener(type,cb) {
@@ -15,7 +16,12 @@ export default class WebXRBoilerPlate {
 
     init() {
         this.scene = new Scene();
-        this.camera = new PerspectiveCamera(70, this.container.clientWidth / this.container.clientHeight, 0.1, 50);
+        this.camera = new PerspectiveCamera(
+            70, // fov
+            this.container.clientWidth / this.container.clientHeight, //aspect ratio of the container
+            this.options.near || 0.1, //near edge of viewing frustrum
+            this.options.far || 50 // far edge of viewing frustrum
+        );
         this.renderer = new WebGLRenderer({antialias: true});
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
