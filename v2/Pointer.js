@@ -1,4 +1,4 @@
-import {Raycaster} from "./Raycaster.js"
+import {Raycaster} from "./raycaster.js"
 import {
     Object3D,
     Vector2,
