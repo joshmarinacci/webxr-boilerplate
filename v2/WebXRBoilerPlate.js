@@ -1,16 +1,34 @@
-import {DefaultLoadingManager, PerspectiveCamera, Scene, WebGLRenderer,} from "./node_modules/three/build/three.module.js"
+import {DefaultLoadingManager, PerspectiveCamera, Scene, WebGLRenderer,} from "../three/build/three.module.js"
+
 
 import VRManager, {VR_DETECTED} from "./vrmanager.js";
+export const FULLSCREEN_ENTERED = "fullscreenenter"
+export const FULLSCREEN_EXITED = "fullscreenexit"
 
 export default class WebXRBoilerPlate {
     constructor(options) {
         this.listeners = {}
         this.container = options.container
         this.resizeOnNextRepaint = false
+
+        //polyfill the container for fullscreen support
+        if(!container.requestFullscreen) {
+            if(container.webkitRequestFullscreen) {
+                container.requestFullscreen = container.webkitRequestFullScreen
+            }
+        }
     }
     addEventListener(type,cb) {
         if(!this.listeners[type]) this.listeners[type] = []
         this.listeners[type].push(cb)
+    }
+    _fire(type,payload) {
+        if(!this.listeners[type]) this.listeners[type] = []
+        this.listeners[type].forEach(cb => cb(payload))
+    }
+
+    isFullscreenSupported() {
+        return this.container.requestFullscreen?true:false
     }
 
     init() {
@@ -23,9 +41,7 @@ export default class WebXRBoilerPlate {
         this.renderer.vr.enabled = true;
         this.container.appendChild(this.renderer.domElement);
         this.vrmanager = new VRManager(this.renderer)
-        this.vrmanager.addEventListener(VR_DETECTED, ()=>{
-            if(this.listeners[VR_DETECTED]) this.listeners[VR_DETECTED].forEach(cb => cb(this))
-        })
+        this.vrmanager.addEventListener(VR_DETECTED, ()=> this._fire(VR_DETECTED,this))
 
         this.loadingManager = DefaultLoadingManager
 
@@ -54,6 +70,14 @@ export default class WebXRBoilerPlate {
 
         this.renderer.setAnimationLoop(this.render)
 
+        this.fullscreenchangeHandler = () => {
+            if(document.fullscreenElement) return this._fire(FULLSCREEN_ENTERED, this)
+            if(document.webkitFullscreenElement) return this._fire(FULLSCREEN_ENTERED, this)
+            this._fire(FULLSCREEN_EXITED,this)
+        }
+        document.addEventListener('fullscreenchange',this.fullscreenchangeHandler)
+        document.addEventListener('webkitfullscreenchange',this.fullscreenchangeHandler)
+
         return new Promise((res, rej) => {
             res(this)
         })
@@ -71,6 +95,12 @@ export default class WebXRBoilerPlate {
     playFullscreen() {
         this.resizeOnNextRepaint = true
         this.container.requestFullscreen()
+    }
+
+    exitFullscreen() {
+        this.resizeOnNextRepaint = true
+        if(document.exitFullscreen) document.exitFullscreen()
+        if(document.webkitExitFullscreen) document.webkitExitFullscreen()
     }
 
     checkContainerSize() {
