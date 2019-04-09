@@ -1,4 +1,5 @@
-const Ray = THREE.Ray
+import {Ray} from "../three/build/three.module.js"
+
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author bhouston / http://clara.io/
