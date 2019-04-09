@@ -1,12 +1,12 @@
 {
-  "name": "v2",
-  "version": "1.0.0",
+  "name": "webxr-boilerplate",
+  "version": "0.2.0",
   "description": "",
   "main": "BackgroundAudioLoader.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "joshua@marinacci.org",
   "license": "ISC",
   "dependencies": {
     "three": "^0.101.1"
