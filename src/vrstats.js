@@ -1,7 +1,7 @@
 import {
     Group, CanvasTexture, Mesh, PlaneBufferGeometry, PlaneGeometry, MeshBasicMaterial,
 }
-from '../three/build/three.module.js'
+from '../../three/build/three.module.js'
 export default class VRStats extends Group {
     constructor(app) {
         super();
