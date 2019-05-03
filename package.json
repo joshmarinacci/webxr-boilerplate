@@ -2,9 +2,11 @@
   "name": "webxr-boilerplate",
   "version": "0.1.7",
   "description": "Boilerplate for using WebVR/XR with ThreeJS",
-  "module": "index.js",
+  "main": "lib/index.js",
+  "module": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "nwb build index.js"
   },
   "repository": {
     "type": "git",
@@ -18,5 +20,8 @@
   "homepage": "https://github.com/joshmarinacci/webxr-boilerplate#readme",
   "dependencies": {
     "three": "^0.100.0"
+  },
+  "devDependencies": {
+    "nwb": "^0.23.0"
   }
 }

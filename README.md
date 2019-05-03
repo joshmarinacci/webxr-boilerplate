@@ -1,11 +1,19 @@
 # ThreeJS + WebVR Boilerplate
 
+## Note to viewers of my ThreeJS video series
+
+The video series used an older version of the boilerplate that has since been deleted. You can pretty much use
+the new stuff the same as the old, you'll just need to modify your imports because it uses ES6 modules now. If you
+really want to use the old stuff check out the previous version [here](https://github.com/joshmarinacci/webxr-boilerplate/releases/tag/v1)
+
+
+
 
 ## How to use this boilerplate
 
 * in your new project install the boilerplate with `npm install --save webxr-boilerplate`
 * this will automatically install ThreeJS as well
-* copy `node_modules/webxr-boilerplate/v2.html` to `./index.html`
+* copy `node_modules/webxr-boilerplate/src/index.html` to `./index.html`
 * customize `initContent()` in `index.html` with whatever you want.
 
 
