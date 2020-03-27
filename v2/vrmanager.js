@@ -17,7 +17,7 @@ export default class VRManager {
         if(!this.renderer) throw new Error("VR Manager requires a valid ThreeJS renderer instance")
         this.listeners = {}
 
-        if ('xr' in navigator) {
+        if ('xr' in navigator && navigator.xr.requestDevice) {
             console.log("has webxr")
             navigator.xr.requestDevice().then((device) => {
                 device.supportsSession({immersive: true, exclusive: true /* DEPRECATED */})
